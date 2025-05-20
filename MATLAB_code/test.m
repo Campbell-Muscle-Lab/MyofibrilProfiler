@@ -26,7 +26,7 @@ d = bfopen(p.image_file_string)
 ds1 = d{1,1}{1,1};
 
 % Extract profile along the spline
-im_profile = improfile(ds1, xs, ys);
+im_profile = improfile(ds1, xs, ys)
 x_profile = 1:numel(im_profile);
 
 % Find peaks
@@ -43,6 +43,7 @@ for i = 1 : no_of_sarcomeres
     x_temp = normalize(profile_indices, 'range');
     y_sarc_profile(i, :) = interp1(x_temp, im_profile(profile_indices), ...
         x_sarc_profile);
+    y_sarc_profile(i, :) = normalize(y_sarc_profile(i, :),'range');
 end
 
 figure(1);
@@ -66,9 +67,9 @@ subplot(n_rows, n_cols, (2*n_cols)+1);
 hold on;
 plot(x_sarc_profile, y_sarc_profile);
 
-subplot(n_rows, n_cols, (3*n_cols)+1);
-hold on;
-shadedErrorBar(x_sarc_profile, y_sarc_profile, {@mean, @std});
+% subplot(n_rows, n_cols, (3*n_cols)+1);
+% hold on;
+% shadedErrorBar(x_sarc_profile, y_sarc_profile, {@mean, @std});
 
 
 
