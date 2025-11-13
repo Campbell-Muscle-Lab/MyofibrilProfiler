@@ -1,0 +1,8 @@
+remote_theme: pmarsceill/just-the-docs
+title: Chekhov
+description: Custom data acquisition software
+math: mathjax
+url: https://campbell-muscle-lab.github.io/Chekhov
+
+aux_links:
+  Chekhov Repo: https://github.com/Campbell-Muscle-Lab/Chekhov
