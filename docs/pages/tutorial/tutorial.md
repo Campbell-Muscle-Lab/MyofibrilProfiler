@@ -2,6 +2,7 @@
 title: Tutorial
 nav_order: 3
 has_children: True
+layout: page
 ---
 
 # Tutorial

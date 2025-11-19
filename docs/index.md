@@ -1,10 +1,14 @@
 ---
-title: Chekhov
+title: MyofibrilProfiler
+layout: home
 nav_order: 1
 ---
 
-## Chekhov
 
-Chekhov is a software which can generate and collect different sorts of signals from a multi purpose muscle mechanics setup. For more detail on these sort of experiments, following publication is a good place to start: [The regulatory light chain mediates inactivation of myosin motors during active shortening of cardiac muscle by Thomas Kampourakis & Malcolm Irving](https://www.nature.com/articles/s41467-021-25601-8)
+## MyofibrilProfiler
 
-<a href="media/chekhov_app.png" target="_blank">![Chekhov GUI](media/chekhov_app.png)</a>
+MyofibrilProfiler is an open-source software developed to extract and analyze striated patterns from muscle preparations labeled with immunofluorescent agents. It seamlessly works with proprietary microscope image file formats (ND2) as well as standard image formats (TIF and PNG). The software is developed by [Utku Gulbulak](mailto:utku.gulbulak@uky.edu), [Thomas Kampourakis](mailto:tka265@uky.edu), and [Ken Campbell](mailto:kscamp3@uky.edu).
+
+
+
+<a href="media/myofibrilprofiler_app.png" target="_blank">![MyofibrilProfiler GUI](media/myofibrilprofiler_app.png)</a>
