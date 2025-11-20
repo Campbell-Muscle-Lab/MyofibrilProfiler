@@ -2,23 +2,23 @@
     "doc": "Cloning MyofibrilProfiler repository",
     "title": "Installation",
     "content": " ",
-    "url": "/pages/installation/cloning_myofibrilprofiler/cloning_chekhov.html#installation",
+    "url": "/pages/installation/cloning_myofibrilprofiler/cloning_myofibril_profiler.html#installation",
     
-    "relUrl": "/pages/installation/cloning_myofibrilprofiler/cloning_chekhov.html#installation"
+    "relUrl": "/pages/installation/cloning_myofibrilprofiler/cloning_myofibril_profiler.html#installation"
   },"1": {
     "doc": "Cloning MyofibrilProfiler repository",
-    "title": "Cloning Chekhov Repository",
-    "content": "This page instructs you on how to clone the Chekhov repository. We recommend cloning the Chekhov repository using the GitHub Desktop client. Clicking on any of the images on this page will open a larger version in a new browser window. Open GitHub Desktop and click the dropdown menu for repositories (shown in red rectangle in the below image). Click the “Add” dropdown menu (shown in red rectangle in the below image). Click the “Clone repository…” button (shown in red rectangle in the below image). Click the URL tab shown in the red rectangle. The URL of the Chekhov repo is : . https://github.com/Campbell-Muscle-Lab/Chekhov.git . Enter the URL in the textbox shown in the red rectangle. Select the location you would like to store the cloned repository. Chekhov repo is successfully cloned to your computer. ",
-    "url": "/pages/installation/cloning_myofibrilprofiler/cloning_chekhov.html#cloning-chekhov-repository",
+    "title": "Cloning MyofibrilProfiler Repository",
+    "content": "This page instructs you on how to clone the MyofibrilProfiler repository. We recommend cloning the MyofibrilProfiler repository using the GitHub Desktop client. Clicking on any of the images on this page will open a larger version in a new browser window. Open GitHub Desktop and click the dropdown menu for repositories (shown in red rectangle in the below image). Click the “Add” dropdown menu (shown in red rectangle in the below image). Click the “Clone repository…” button (shown in red rectangle in the below image). Click the URL tab shown in the red rectangle. The URL of the MyofibrilProfiler repo is : . https://github.com/Campbell-Muscle-Lab/MyofibrilProfiler.git . Enter the URL in the textbox shown in the red rectangle. Select the location you would like to store the cloned repository. MyofibrilProfiler repo is successfully cloned to your computer. ",
+    "url": "/pages/installation/cloning_myofibrilprofiler/cloning_myofibril_profiler.html#cloning-myofibrilprofiler-repository",
     
-    "relUrl": "/pages/installation/cloning_myofibrilprofiler/cloning_chekhov.html#cloning-chekhov-repository"
+    "relUrl": "/pages/installation/cloning_myofibrilprofiler/cloning_myofibril_profiler.html#cloning-myofibrilprofiler-repository"
   },"2": {
     "doc": "Cloning MyofibrilProfiler repository",
     "title": "Cloning MyofibrilProfiler repository",
     "content": " ",
-    "url": "/pages/installation/cloning_myofibrilprofiler/cloning_chekhov.html",
+    "url": "/pages/installation/cloning_myofibrilprofiler/cloning_myofibril_profiler.html",
     
-    "relUrl": "/pages/installation/cloning_myofibrilprofiler/cloning_chekhov.html"
+    "relUrl": "/pages/installation/cloning_myofibrilprofiler/cloning_myofibril_profiler.html"
   },"3": {
     "doc": "Help",
     "title": "Help",
@@ -50,7 +50,7 @@
   },"7": {
     "doc": "Instructions for MATLAB App Installation",
     "title": "Instructions for MATLAB App Installation",
-    "content": "This page instructs you on how to install Chekhov as a MATLAB App. | The MATLAB App installer file can be downloaded from the GitHub page. 7Jun25 installer is the current Chekhov build. In this case, the installer file is located under your designated Downloads folder. | Users can also clone the Chekhov repository and access the MATLAB App installer file. The installer file is located under &lt;repo&gt;app\\7Jun25. The instructions on how to clone a repository can be found here. | . Locate Chekhov.mlappinstall file on your computer. Double-click the Chekhov.mlappinstall and the file will include Chekhov in your MATLAB Applications. Click Install when the below prompt appears. After a couple of seconds, go to the Apps tab on the top menu of your MATLAB, shown in red rectangle. You can find the Chekhov application under the My Apps section, shown in red rectangle. Now Chekhov is ready to be used. ",
+    "content": "This page instructs you on how to install MyofibrilProfiler as a MATLAB App. | The MATLAB App installer file can be downloaded from the GitHub page. 19Nov25 installer is the current MyofibrilProfiler build. In this case, the installer file is located under your designated Downloads folder. | Users can also clone the MyofibrilProfiler repository and access the MATLAB App installer file. The installer file is located under &lt;repo&gt;app\\19Nov25. The instructions on how to clone a repository can be found here. | . Locate MyofibrilProfiler.mlappinstall file on your computer. Double-click the MyofibrilProfiler.mlappinstall and the file will include MyofibrilProfiler in your MATLAB Applications. Click Install when the below prompt appears. After a couple of seconds, go to the Apps tab on the top menu of your MATLAB, shown in red rectangle. You can find the MyofibrilProfiler application under the My Apps section, shown in red rectangle. Now MyofibrilProfiler is ready to be used. ",
     "url": "/pages/installation/installing_matlab_app/installing_matlab_app.html",
     
     "relUrl": "/pages/installation/installing_matlab_app/installing_matlab_app.html"
@@ -64,7 +64,7 @@
   },"9": {
     "doc": "Instructions for Stand Alone Application Installation",
     "title": "Instructions for Stand Alone Application Installation",
-    "content": "This page instructs you on how to install Chekhov as a stand-alone application. | The installer file can be downloaded from the GitHub page. 7June25 installer is the current Chekhov build. In this case, the installer file is located under your designated Downloads folder. | Users can also clone the Chekhov repository and access the zipped installer file. The installer file is located under &lt;repo&gt;bin\\7June25. The instructions on how to clone a repository can be found here. | . Locate the installer file on your computer and unzip it. Once the installer is unzipped, double-click the Chekhov.exe file. The installer starts in a few seconds and then click Next. The installer asks users to select the installation folder and then click Next. In the next step, the installer asks the folder for the MATLAB Runtime. The MATLAB Runtime will be automatically downloaded from the internet in the later steps. Click Next to continue. MATLAB Runtime License agreement is needed for the runtime installation, click Yes for the license agreement and Next to continue. MATLAB Runtime is ready to be downloaded. Click Next to proceed. The download may take some time depending on the internet connection. Once the download is completed, press Close. Now Chekhov is ready to be used. ",
+    "content": "This page instructs you on how to install MyofibrilProfiler as a stand-alone application. | The installer file can be downloaded from the GitHub page. 19Nov25 installer is the current MyofibrilProfiler build. In this case, the installer file is located under your designated Downloads folder. | Users can also clone the MyofibrilProfiler repository and access the zipped installer file. The installer file is located under &lt;repo&gt;bin\\19Nov25. The instructions on how to clone a repository can be found here. | . Locate the installer file on your computer and unzip it. Once the installer is unzipped, double-click the MyofibrilProfiler.exe file. The installer starts in a few seconds and then click Next. The installer asks users to select the installation folder and then click Next. In the next step, the installer asks the folder for the MATLAB Runtime. The MATLAB Runtime will be automatically downloaded from the internet in the later steps. Click Next to continue. MATLAB Runtime License agreement is needed for the runtime installation, click Yes for the license agreement and Next to continue. MATLAB Runtime is ready to be downloaded. Click Next to proceed. The download may take some time depending on the internet connection. Once the download is completed, press Close. Now MyofibrilProfiler is ready to be used. ",
     "url": "/pages/installation/installing_stand_alone_application/installing_stand_alone_application.html",
     
     "relUrl": "/pages/installation/installing_stand_alone_application/installing_stand_alone_application.html"
@@ -120,7 +120,7 @@
   },"17": {
     "doc": "Tutorial",
     "title": "Tutorial",
-    "content": "Chekhov has multiple features and uses a multi window approach to provide desired features: . | Chekhov: Main app window for users to generate signals and collect data. | ChekhovPockelCellCalibration: App window to calibrate Pockel cell. This step needs to be completed beginning of every experiment. | ChekhovCamera: App window to access the camera feed of the experimental setup. | . Chekhov is currently configured to work with National Instruments data acquisition boards and Thorlabs cameras. While a small tweaking is needed to work with it other hardware, it is compatible with all the models from above manufacturers. The getting started tutorial includes how to use the all of the parts of the software. ",
+    "content": "Users can start a new analysis and also revisit their old analyses by loading them into the MyofibrilProfiler . ",
     "url": "/pages/tutorial/tutorial.html",
     
     "relUrl": "/pages/tutorial/tutorial.html"
