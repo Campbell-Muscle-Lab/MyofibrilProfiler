@@ -8,7 +8,7 @@ layout: page
 
 # **Start new analysis**
 
-This tutorial provides simple instructions on performing a new analysis with MyofibrilProfiler. Clicking on any of the images on this page will open a larger version in a new browser window. The preparation shown here was probed for myosin heavy chain and myosin light chain kinase.
+This tutorial provides simple instructions on performing a new analysis with MyofibrilProfiler. Clicking on any of the images on this page will open a larger version in a new browser window. The preparation shown here was probed for myosin heavy chain and an associated protein.
 
 ## Getting started
 
