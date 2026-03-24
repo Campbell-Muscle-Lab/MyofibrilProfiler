@@ -6,6 +6,8 @@ col_map = repmat(col_map,[no_of_sarcomeres 1]);
 col_map(:,3) = shade;
 
 sarc_col = [];
+if ~isempty(col_map)
 sarc_col = hsv2rgb(col_map);
+end
 end
 

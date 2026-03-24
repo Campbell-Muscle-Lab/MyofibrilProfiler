@@ -99,8 +99,13 @@ classdef myofibril_profiler_exported_git_track < matlab.apps.AppBase
             view(app.ProfileIntensity,[rad2deg(ang),30])
             plot(app.ProfileIntensityXCoord,prof_x,rescale(im_profile),'Color',col,'LineWidth',1.7);
             plot(app.ProfileIntensityYCoord,prof_y,rescale(im_profile),'Color',col,'LineWidth',1.7);
-            xlim(app.ProfileIntensityXCoord,[prof_x(1) prof_x(end)])
-            xlim(app.ProfileIntensityYCoord,[prof_y(1) prof_y(end)])
+            
+            x_limits_horizontal = [prof_x(1) prof_x(end)];
+            x_limits_horizontal = sort(x_limits_horizontal,'ascend');
+            x_limits_vertical = [prof_y(1) prof_y(end)];
+            x_limits_vertical = sort(x_limits_vertical,'ascend');
+            xlim(app.ProfileIntensityXCoord,x_limits_horizontal)
+            xlim(app.ProfileIntensityYCoord,x_limits_vertical)
 
             col(4) = 0.7;
             for i = 1 : numel(locs_z_line)
@@ -172,13 +177,14 @@ classdef myofibril_profiler_exported_git_track < matlab.apps.AppBase
                     'MarkerFaceAlpha',0.5)
 
             end
-            fwhm
             if ~isempty(sarcs_to_remove)
                 y_sarc_profile(sarcs_to_remove,:) = [];
                 x_sarc_profile(sarcs_to_remove,:) = [];
                 sarc_len(sarcs_to_remove) = [];
-                fwhm(sarcs_to_remove) = [];
+                % fwhm(sarcs_to_remove) = [];
             end
+            
+            if no_of_sarcomeres > 0
             mean_sarc_profile = mean(y_sarc_profile,1);
 
             x_sarc_profile_mean = mean(x_sarc_profile,1);
@@ -206,6 +212,7 @@ classdef myofibril_profiler_exported_git_track < matlab.apps.AppBase
             
             no_of_sarcomeres = numel(sarc_len);
             app.UpdateSummaryTable(channel_no,no_of_sarcomeres,sarc_col);
+            end
 
         end
 
@@ -337,21 +344,28 @@ classdef myofibril_profiler_exported_git_track < matlab.apps.AppBase
                     h = app.myofibril_data.meta_file;
                     app.CalibrationumpxEditField.Value = h.get('Global dCalibration');
                     im = app.myofibril_data.image_file;
-                    im = im{1,1};
+                    im = im{1,1}
                     im(:,2) = [];
                     app.myofibril_data.image = im;
                     sz = size(im);
                     delete(app.TabGroup.Children)
+                    tab_no = 1;
                     for i = 1:sz(1)
-                        app.Tabs{i} = uitab(app.TabGroup,'Title',['Channel ' num2str(i)]);
-                        app.ChannelAxes{i} = copyobj(im_ax,app.Tabs{i});
-                        app.ChannelAxes{i}.Visible = 'on';
-                        center_image_with_preserved_aspect_ratio(app.myofibril_data.image{i,1},app.ChannelAxes{i})
-                        app.myofibril_data.pseudo_color_images{i,1} = app.myofibril_data.image{i,1};
+                        try
                         w_text = sprintf('Global CSU-W1, FilterChanger(EM) #%i',i);
                         w_text = h.get(w_text);
                         em_wavelength = str2double(extractBetween(w_text,"(","/"));
-                        app.myofibril_data.em_wavelengths(i) = em_wavelength;
+                        app.myofibril_data.em_wavelengths(tab_no) = em_wavelength;
+                        app.Tabs{tab_no} = uitab(app.TabGroup,'Title',['Channel ' num2str(tab_no)]);
+                        app.ChannelAxes{tab_no} = copyobj(im_ax,app.Tabs{tab_no});
+                        app.ChannelAxes{tab_no}.Visible = 'on';
+                        center_image_with_preserved_aspect_ratio(app.myofibril_data.image{i,1},app.ChannelAxes{tab_no})
+                        app.myofibril_data.pseudo_color_images{tab_no,1} = app.myofibril_data.image{i,1};
+                        tab_no = tab_no + 1;
+                        catch
+                            continue
+                        end
+
                     end
                     app.Tabs{end+1} = uitab(app.TabGroup,'Title','Merged ');
                     app.ChannelAxes{end+1} = copyobj(im_ax,app.Tabs{end});
@@ -361,6 +375,9 @@ classdef myofibril_profiler_exported_git_track < matlab.apps.AppBase
                     app.RefreshDisplay
                 else
                     im = imread(app.myofibril_data.image_file_string);
+                    if (ndims(im)==3)
+                        im = rgb2gray(im);
+                    end
                     app.myofibril_data.image = im;
                     app.ChannelAxes{1} = copyobj(im_ax,app.ImageTab);
                     app.ChannelAxes{1}.Visible = 'on';
@@ -401,6 +418,9 @@ classdef myofibril_profiler_exported_git_track < matlab.apps.AppBase
                     if path_string~=0
                        app.myofibril_data.image_file_string{loaded_files} = fullfile(path_string,file_string);
                        app.myofibril_data.image{loaded_files,1} = imread(app.myofibril_data.image_file_string{loaded_files});
+                       if (ndims(app.myofibril_data.image{loaded_files,1})==3)
+                           app.myofibril_data.image{loaded_files,1} = rgb2gray(app.myofibril_data.image{loaded_files,1});
+                       end
                     end
                 end
 
@@ -742,16 +762,17 @@ classdef myofibril_profiler_exported_git_track < matlab.apps.AppBase
 
                     writetable(struct2table(sarcomere.sum_profiles.(channel_name)),output_file_string,'Sheet',sum_sheet_name)
 
+                    
+                    if ~isempty(app.myofibril_data.profile(i).sarcomere_lengths)
+                        for j = 1 : numel(app.myofibril_data.profile(i).sarcomere_lengths)
+                            var_name = sprintf('sarcomere_intensity_%i',j);
+                            location_name = sprintf('location_um_%i',j);
+                            sarcomere.(channel_name).(location_name) = app.myofibril_data.profile(i).sarcomere_location(j,:)';
+                            sarcomere.(channel_name).(var_name) = app.myofibril_data.profile(i).sarcomere_intensities(j,:)';
+                        end
 
-                    for j = 1 : numel(app.myofibril_data.profile(i).sarcomere_lengths)
-                        var_name = sprintf('sarcomere_intensity_%i',j);
-                        location_name = sprintf('location_um_%i',j);
-                        sarcomere.(channel_name).(location_name) = app.myofibril_data.profile(i).sarcomere_location(j,:)';
-                        sarcomere.(channel_name).(var_name) = app.myofibril_data.profile(i).sarcomere_intensities(j,:)';
+                        writetable(struct2table(sarcomere.(channel_name)),output_file_string,'Sheet',sheet_name)
                     end
-
-                    writetable(struct2table(sarcomere.(channel_name)),output_file_string,'Sheet',sheet_name)
-
 
                 end
 
