@@ -21,30 +21,30 @@ Locate the installer file on your computer and unzip it. Once the installer is u
 
 The installer starts in a few seconds and then click Next.
 
-<a href="media/MyofibrilProfiler_installer_start.png" target="_blank">![Installer start](media/MyofibrilProfiler_installer_start.png)</a>
+<a href="media/myofibrilprofiler_installer_start.png" target="_blank">![Installer start](media/myofibrilprofiler_installer_start.png)</a>
 
 The installer asks users to select the installation folder and then click Next.
 
-<a href="media/MyofibrilProfiler_installer_shortcut.png" target="_blank">![Installer shortcut](media/MyofibrilProfiler_installer_shortcut.png)</a>
+<a href="media/myofibrilprofiler_installer_shortcut.png" target="_blank">![Installer shortcut](media/myofibrilprofiler_installer_shortcut.png)</a>
 
 In the next step, the installer asks the folder for the MATLAB Runtime. The MATLAB Runtime will be automatically downloaded from the internet in the later steps. Click Next to continue.
 
-<a href="media/MyofibrilProfiler_installer_rcr.png" target="_blank">![Installer runtime](media/MyofibrilProfiler_installer_rcr.png)</a>
+<a href="media/myofibrilprofiler_installer_rcr.png" target="_blank">![Installer runtime](media/myofibrilprofiler_installer_rcr.png)</a>
 
 MATLAB Runtime License agreement is needed for the runtime installation, click Yes for the license agreement and Next to continue.
 
-<a href="media/MyofibrilProfiler_installer_license_agreement.png" target="_blank">![Installer license agreement](media/MyofibrilProfiler_installer_license_agreement.png)</a>
+<a href="media/myofibrilprofiler_installer_license_agreement.png" target="_blank">![Installer license agreement](media/myofibrilprofiler_installer_license_agreement.png)</a>
 
 MATLAB Runtime is ready to be downloaded. Click Next to proceed.
 
-<a href="media/MyofibrilProfiler_installer_start_download.png" target="_blank">![Installer start download](media/MyofibrilProfiler_installer_start_download.png)</a>
+<a href="media/myofibrilprofiler_installer_start_download.png" target="_blank">![Installer start download](media/myofibrilprofiler_installer_start_download.png)</a>
 
 The download may take some time depending on the internet connection.
 
-<a href="media/MyofibrilProfiler_installer_installing.png" target="_blank">![Installer installing](media/MyofibrilProfiler_installer_installing.png)</a>
+<a href="media/myofibrilprofiler_installer_installing.png" target="_blank">![Installer installing](media/myofibrilprofiler_installer_installing.png)</a>
 
 Once the download is completed, press Close.
 
-<a href="media/MyofibrilProfiler_ready.png" target="_blank">![MyofibrilProfiler ready](media/MyofibrilProfiler_ready.png)</a>
+<a href="media/myofibrilprofiler_ready.png" target="_blank">![MyofibrilProfiler ready](media/myofibrilprofiler_ready.png)</a>
 
 Now MyofibrilProfiler is ready to be used.
