@@ -23,11 +23,11 @@ After a few seconds, you should see the program window, given below.
 
 <a href="media/myofibril_profiler_app.png" target="_blank">![myofibril_profiler_app](media/myofibril_profiler_app.png)</a>
 
-Hover over to the Labeling panel and click on the dropdown menu, shown in red rectangle. Select the Z line option. 
+Hover over to the Labeling panel and click on the dropdown menu, shown in red rectangle. Select the Across option. 
 
 <a href="media/labeling_drop_down.png" target="_blank">![labeling_drop_down](media/labeling_drop_down.png)</a>
 
-Please note that the Z line interface is slightly different than the A band.
+Please note that the Across interface is slightly different than the Along.
 
 <a href="media/z_line_interface.png" target="_blank">![z_line_interface](media/z_line_interface.png)</a>
 
@@ -228,7 +228,7 @@ $Tortuosity= \frac{\text{Actual path length}}{\text{Distance between endpoints}}
 <br>
 
 <p style="text-align: justify;">
-Tortuosity calculation requires a quadrilateral ROI and would not be quantified for "line scan" ROIs. Each image is automatically binarized as soon as they are loaded into the interface. Once the user selects their ROI, software picks the region of interest and <a href = "https://www.mathworks.com/help/images/ref/bwskel.html">skeletonize</a> binary elements to lines. While the distance between endpoints determined as the "straight line" distance between two points in two dimensional space, the actual path length is calculated as the summation of pixel to pixel distance along the each line.
+Each image is automatically binarized as soon as they are loaded into the interface. Once the user selects their ROI, software identifies intersecting binary objects. Each object is rotated around their major axis until it is horizontal. First, <a href = "https://www.mathworks.com/help/curvefit/cubic-smoothing-splines.html">a cubic smoothing spline</a> is fitted onto each objects's coordinate space. Then, the splines are extrapolated to identify adjacent objects. If the extrapolated spline intersects a nearby object, the spline is re-evaluated using the combined coordinate space of intersecting objects. The fitting process is repeated until the spline does not pass through any additional binary object. The fitted splines are shown with white solid lines and all the binary objects used for fitting are shown in different colors. The burnt orange, the top object, shows an example of combined objects to identify a single Z disk stripe. While the distance between endpoints, shown in dashed grey line, determined as the "straight line" distance between two points in two dimensional space, the actual path length is calculated as the summation of point to point distance along each spline.
 </p>
 
 <br>

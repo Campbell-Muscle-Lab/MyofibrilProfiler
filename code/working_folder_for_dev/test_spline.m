@@ -9,54 +9,74 @@ profile = rescale(profile)
 [~,peaks] = findpeaks(profile,'MinPeakDistance',25);
 [~,dips] = findpeaks(-profile+1,'MinPeakDistance',50);
 
-se = strel('disk', 200);
-im_open = (imopen(profile,se));
-
-% number_of_elements = numel(x);
-% fraction = app.FractionSpinner.Value/100;
-% fraction_ix = ceil(fraction*number_of_elements);
-% app.c_x = [];
-% app.c_y = [];
-% ix_1 = [];
-% ix_2 = [];
-% ix_1 = 1:fraction_ix;
-% ix_2 = number_of_elements:-1:(number_of_elements - fraction_ix + 1);
-% app.c_x = [ix_1 ix_2];
-% app.c_y = x(app.c_x);
-% s = app.SmoothingEditField.Value;
-% app.gel_data.background(box_no).x_back = csaps(app.c_x,app.c_y,s,0:numel(x)-1)'
-
 figure(1)
 clf
-subplot(2,1,1)
+subplot(3,1,1)
 hold on
 plot(profile,'k')
 plot(peaks,profile(peaks),'ro','MarkerSize',10)
 plot(dips,profile(dips),'ms','MarkerSize',10)
 
-for i = 1 : numel(dips) - 1
 
-cx = [dips(i) dips(i+1)];
-cy = profile(cx);
+for i = 1 : numel(peaks)-1
 
-spl = csaps(cx,cy,0.5,cx(1):cx(end))'
+x_profile = [];
+prof = [];
 
-plot(cx(1):cx(end),spl)
+x_profile = peaks(i):peaks(i+1);
+
+dip = dips(dips>peaks(i) & dips<peaks(i+1));
+dip_ix = find(dip == x_profile);
+prof = -profile(x_profile) + 1;
+
+fwhm_ix(i,1) = find(prof >= 0.5*(prof(dip_ix) + prof(1)),1,'first');
+fwhm_ix(i,2) = find(prof >= 0.5*(prof(dip_ix) + prof(end)),1,'last');
+fwhm(i) = x_profile(fwhm_ix(i,2)) - x_profile(fwhm_ix(i,1));
+
+subplot(3,1,2)
+hold on
+plot(x_profile,prof)
+plot(x_profile(dip_ix),prof(dip_ix),'s')
+plot(x_profile(fwhm_ix(i,:)),prof(fwhm_ix(i,:)),'o')
+
+end
+rng default; % For reproducibility
+
+[idx,C] = kmeans(fwhm',2)
+
+group_1 = fwhm(idx==1)
+group_2 = fwhm(idx==2)
+
+fwhm_ix;
+
+
+for i = 1:size(fwhm_ix,1)
+
+
+    x_profile = [];
+    prof = [];
+
+    x_profile = peaks(i):peaks(i+1);
+    prof = -profile(x_profile) + 1;
+
+    subplot(3,1,3)
+    hold on
+    plot(x_profile,prof)
+    
+    if idx(i) == 1
+        col = [1 0 0];
+    else
+        col = [0 0 1];
+    end
+
+    x = linspace(x_profile(fwhm_ix(i,1)),x_profile(fwhm_ix(i,2)));
+    y = linspace(prof(fwhm_ix(i,1)),prof(fwhm_ix(i,2)));
+    plot(x,y,':','color',col)
+
+    fwhm(i)
+
 
 end
 
-
-
-
-
-
-subplot(2,1,2)
-hold on
-plot(profile,'k')
-plot(im_open,'r')
-
-
-
-
-
+[h,p,ci,stats] = ttest2(group_1,group_2)
 end

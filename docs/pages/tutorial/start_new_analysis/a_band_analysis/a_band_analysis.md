@@ -158,7 +158,7 @@ The ROI and spline can be also found in the Merged image axis. Once again, this 
 Once the ROIs are defined, the software initiates the analysis. The pixel intensity is extracted along the crosssection of the generated spline. Since the spline is defined in the 2 dimensional space of the horizontal and vertical image axes. Therefore, the extracted profiles are shown in a 3 dimensional axes. The trace colors follow the Channel Colormap scheme. Channel 1 results are shown in green and the Channel 2 results are shown in orange throughout this tutorial.</p>
 
 <p style="text-align: justify;">
-The extracted profiles are formed by patterns of troughs and crescents and the software uses a peak finding algorithm to identify them. The Z-lines are the starting point and crucial for the rest of the analysis. Since they are not probed with a fluorescent agent, they appear as dark in the images with relatively low intensity. The identification is performed on the extracted profile and then locations are marked on respective x and y axes. The Z-lines are shown with dashed lines on the horizontal and vertical image axes figures. Please note that the software specifically aims to capture the troughs with the lower intensities, rather than all of them including the M line.
+The extracted profiles are formed by patterns of troughs and crescents and the software uses a peak finding algorithm to identify them. The software identifies all the troughs in the profile and then judiciously divide them into possible Z and M line points with respect to their widths. Then, the software performs a t-test to see whether the groups have different widths. If the test is successful, sarcomere profiles can be extracted. Z lines locations are marked on respective x and y axes. The Z-lines are shown with dashed lines on the horizontal and vertical image axes figures.
 </p>
 
 ### Sarcomere analysis
@@ -201,17 +201,17 @@ As a result of the averaging, sarcomere profiles are smoothened and the initial 
 
 <a href="media/patch.png" target="_blank">![patch](media/patch.png)</a>
 
-<h5>Z line prominence</h5>
+<h5>Primary prominence</h5>
 
-Since the extracted profiles are cyclic, it is important to not to mark all the troughs as the Z-line. The software uses an option called prominence to go around this. The default prominence value is 0.5, which means that MyoProfiler is looking for values that are at least half of the maximum intensity of the sampled space measured from a reference point. Users can change this value through the Profiler panel, shown in red rectangle.
+Since the extracted profiles are cyclic, it is important to distinguish the Z lines from the M lines. The software first identifies all the dips in the profile. Since some of these dips are relatively smaller, the software uses an option called prominence to go around this. The default prominence value is 0.05, which means that MyoProfiler is looking for values that are at least 5% smaller of the sampled space measured from a reference point. Users can change this value through the Profiler panel, shown in red rectangle.
 
 <a href="media/z_line_prominence.png" target="_blank">![z_line_prominence](media/z_line_prominence.png)</a>
 
-The Z-line prominence value is reduced to 0.1 and all the troughs are labeled as Z-lines. This option might be useful for troubleshooting purposes, but it resulted in with an unwanted results in this case.
+The primary prominence value is increased to 0.5 and none of the troughs are labeled as Z lines. Instead, the software returned a warning message saying that the none of the profiles have a distinguishable pattern. This option might be useful for troubleshooting purposes, but it resulted in with an unwanted results in this case.
 
-<h5>A band prominence</h5>
+<h5>Secondary prominence</h5>
 
-Similar to the Z-line prominence, A-band prominence helps to distinguish the peaks in the sarcomere profiles. This value is relatively lower than the Z-line prominence since they are close in intensity and slightly separated by M-lines with similar intensities. 
+Similar to the primary prominence, secondary prominence helps to distinguish the peaks in the sarcomere profiles. This value is relatively higher than the primary prominence since they are close in intensity and slightly separated by M-lines with similar intensities. 
 
 In this example, increase in the value resulted in missing an A-band peak which is quite close to the M-line pixel intensity.
 

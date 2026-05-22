@@ -7,6 +7,7 @@
 		{"ID":35108, "DisplayName":"Signal Processing Toolbox Runtime Addon", "Optional":"no"},
 		{"ID":35117, "DisplayName":"Image Processing Toolbox Runtime Addon", "Optional":"no"},
 		{"ID":35119, "DisplayName":"Statistics and Machine Learning Toolbox Runtime Addon", "Optional":"no"},
+		{"ID":35160, "DisplayName":"Curve Fitting Toolbox Runtime Addon", "Optional":"no"},
 		{"ID":35180, "DisplayName":"Parallel Computing Toolbox Standard Runtime Addon", "Optional":"no"}
 	]
 }
