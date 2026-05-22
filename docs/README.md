@@ -5,4 +5,5 @@ MyoProfiler is an open-source software developed to extract and analyze striated
 
 
 
-<a href="media/myofibrilprofiler_app.png" target="_blank">![MyofibrilProfiler GUI](media/myofibrilprofiler_app.png)</a>
+<a href="media/MyoProfiler_A.png" target="_blank">![MyofibrilProfiler GUI A](media/MyoProfiler_A.png)</a>
+<a href="media/MyoProfiler_Z.png" target="_blank">![MyofibrilProfiler GUI Z](media/MyoProfiler_Z.png)</a>
