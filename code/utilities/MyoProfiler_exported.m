@@ -381,9 +381,29 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
 
                     case 'Across'
+                        % 
+                        % adj_z_profile = im_profile(locs_z_line(i):locs_z_line(i+1));
+                        % [pt,lc] = max(-adj_z_profile)
+                        % 
+                        % figure(99)
+                        % hold on
+                        % 
+                        % plot(adj_z_profile)
+                        % plot(lc,adj_z_profile(lc),'o')
+
+                        % [~, locs_all] = findpeaks(y_sarc_profile(i,:), ...
+                        %     'MinPeakDistance',peak_distance, ...
+                        %     'MinPeakProminence',prominence);
+                        % [~,locs_m_line] = max(-y_sarc_profile(i,locs_all(1):locs_all(2)));
+                        % locs_m_line = locs_m_line + locs_all(1) - 1;
+                        % x_sarc_profile(i,:) = x_sarc_profile(i,:)  - x_sarc_profile(i,locs_m_line);
+                        % fwhm_ix(i,1) = find(y_sarc_profile(i,:) >= 0.5*(y_sarc_profile(i,locs_all(1)) + y_sarc_profile(i,1)),1,'first');
+                        % fwhm_ix(i,2) = find(y_sarc_profile(i,:) >= 0.5*(y_sarc_profile(i,locs_all(2)) + y_sarc_profile(i,end)),1,'last');
+                        % fwhm(i) = x_sarc_profile(i,fwhm_ix(i,2)) - x_sarc_profile(i,fwhm_ix(i,1));
+
                         if i == no_of_sarcomeres
                             app.myofibril_data.profile(channel_no).sarcomere_lengths = sarc_len;
-                            app.CalculateZLineMetrics(channel_no);
+                            app.CalculateZLineMetrics(channel_no,im_profile,locs_z_line);
                             app.UpdateSummaryTableZlineMetrics(channel_no);
                             app.UpdateSummaryTableZlineSL(channel_no,no_of_sarcomeres);
                             mean_sarc_profile = mean(y_sarc_profile,1);
@@ -530,9 +550,10 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
         end
 
-        function CalculateZLineMetrics(app,channel_no)
+        function CalculateZLineMetrics(app,channel_no,im_profile,locs_z_line)
 
-
+                peak_distance = app.PeakDistancepxEditField.Value;
+                calibration = app.CalibrationumpxEditField.Value;
                 num_of_bin_tabs = size(app.BinaryChannelAxes,2);
                 num_of_line_tabs = 0.5*num_of_bin_tabs;
                 binary_image = app.myofibril_data.binary_image{channel_no,1};
@@ -682,6 +703,75 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
                 end
 
+                [~,locs_z_line_base] = findpeaks(rescale(-im_profile), ...
+                    "MinPeakDistance",peak_distance, ...
+                    "MinPeakProminence",0.5);
+               
+
+                for i = 1 : numel(locs_z_line)
+                    
+                    
+                    if ~any(locs_z_line_base <= locs_z_line(i))
+                        [~,adj_base_lines(1)] = max(rescale(-im_profile(1:locs_z_line(i))));
+                    else
+                        adj_base_lines(1) = locs_z_line_base(find(locs_z_line_base <= locs_z_line(i), 1, 'last'));
+                    end
+
+                    if ~any(locs_z_line_base >= locs_z_line(i))
+                        indices = locs_z_line(i):numel(im_profile);
+                        [~,t_ix] = max(rescale(-im_profile(indices)));
+                        adj_base_lines(2) = indices(t_ix);
+                    else
+                        adj_base_lines(2) = locs_z_line_base(find(locs_z_line_base >= locs_z_line(i), 1, 'first'));
+                    end
+
+                    x_profile(i,:) = linspace(adj_base_lines(1),adj_base_lines(2),1000);
+                    x_temp = adj_base_lines(1):adj_base_lines(2);
+                    
+                    z_profile(i,:) = interp1(x_temp, ...
+                        im_profile(adj_base_lines(1):adj_base_lines(2)), ...
+                        x_profile(i,:));
+
+                    fwhm_ix(i,1) = find(z_profile(i,:) >= 0.5*(max(z_profile(i,:)) + z_profile(i,1)),1,'first');
+                    fwhm_ix(i,2) = find(z_profile(i,:) >= 0.5*(max(z_profile(i,:)) + z_profile(i,end)),1,'last');
+                    fwhm(i) = calibration*(x_profile(i,fwhm_ix(i,2)) - x_profile(i,fwhm_ix(i,1)));
+
+                    % figure(111)
+                    % clf
+                    % plot(z_profile)
+                    % hold on
+                    % plot(fwhm_ix(i,1),z_profile(fwhm_ix(i,1)),'ro')
+                    % plot(fwhm_ix(i,2),z_profile(fwhm_ix(i,2)),'ro')
+                    
+
+                    % 
+                    % y_sarc_profile(i, :) = interp1(x_temp, im_profile(profile_indices), ...
+                    %     x_sarc_profile(i,:));
+
+
+
+                    % 
+                    % 
+                    % mean_sarc_len = mean(sarc_len);
+                    % x_sarc_profile(i,:) = linspace(0,sarc_len(i), 1000);
+                    % profile_indices = locs_z_line(i) : locs_z_line(i+1);
+                    % x_temp = sarc_len(i)*normalize(profile_indices, 'range');
+                    % x_sarc_profile(i,end) = x_temp(end);
+                    % y_sarc_profile(i, :) = interp1(x_temp, im_profile(profile_indices), ...
+                    %     x_sarc_profile(i,:));
+                    % y_sarc_profile(i,:) = normalize(y_sarc_profile(i,:),'range');
+                    % hold(app.Sarcomeres,'on')
+
+                    % [~,locs_m_line] = max(-y_sarc_profile(i,locs_all(1):locs_all(2)));
+                    % locs_m_line = locs_m_line + locs_all(1) - 1;
+                    % x_sarc_profile(i,:) = x_sarc_profile(i,:)  - x_sarc_profile(i,locs_m_line);
+
+
+
+
+
+                end
+                app.myofibril_data.profile(channel_no).fwhm = fwhm;
                 tortuosity = spline_length./end_point_distance;
                 app.myofibril_data.profile(channel_no).tortuosity = tortuosity;
 
@@ -765,6 +855,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 st.line_no(i,:) = i;
             end
             st.tortuosity = app.myofibril_data.profile(channel_no).tortuosity;
+            st.fwhm = app.myofibril_data.profile(channel_no).fwhm';
             app.SummaryTableZLineMetrics.Data = [app.SummaryTableZLineMetrics.Data; struct2table(st)];
         end
 
@@ -1735,7 +1826,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
             % Create SummaryTableZLineMetrics
             app.SummaryTableZLineMetrics = uitable(app.MetricsTab);
-            app.SummaryTableZLineMetrics.ColumnName = {'Channel'; 'Line Number'; 'Tortuosity'};
+            app.SummaryTableZLineMetrics.ColumnName = {'Channel'; 'Line Number'; 'Tortuosity'; 'FWHM (um)'};
             app.SummaryTableZLineMetrics.RowName = {};
             app.SummaryTableZLineMetrics.Position = [10 9 399 138];
 
