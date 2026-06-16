@@ -6,6 +6,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
         Menu                           matlab.ui.container.Menu
         LoadImageMenu                  matlab.ui.container.Menu
         NikonMenu                      matlab.ui.container.Menu
+        ZeissMenu                      matlab.ui.container.Menu
         StandardFormatsMenu            matlab.ui.container.Menu
         LoadAnalysisMenu               matlab.ui.container.Menu
         ExportAnalysisMenu             matlab.ui.container.Menu
@@ -80,6 +81,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
             roi_width = app.WidthpxEditField.Value;
             col = app.ChannelColors(channel_no,:);
             labeling = app.LabelingDropDown.Value;
+            calibration = app.CalibrationumpxEditField.Value;
 
 
             [prof_x, prof_y, im_profile] = improfile(im, xs, ys);
@@ -106,25 +108,48 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                     % [pks_z_line, locs_z_line] = findpeaks(-rescale(im_profile), ...
                     %     'MinPeakProminence', prominence * range(rescale(im_profile)), ...
                     %     'MinPeakDistance',peak_distance);
-                    [pks_dips, dips] = findpeaks(-rescale(im_profile), ...
-                        'MinPeakProminence', prominence * range(rescale(im_profile)), ...
+                    flipped_profile = -rescale(im_profile) + 1;
+                    [fp_peaks, all_minima,fp_widths] = findpeaks(flipped_profile, ...
+                        'MinPeakProminence', prominence * range(flipped_profile), ...
                         'MinPeakDistance',peak_distance);
                     % figure(2)
                     % findpeaks(-rescale(im_profile), ...
                     %     'MinPeakDistance',peak_distance)
-                    for i = 1 : numel(dips)-1
+                    figure(23)
+                    findpeaks(flipped_profile, ...
+                        'MinPeakProminence', prominence * range(flipped_profile), ...
+                        'MinPeakDistance',peak_distance,'Annotate','extents')
+                    [~,p,~,~] = ttest2(fp_widths(2:2:end),fp_widths(1:2:end))
+                    mean(fp_widths(2:2:end))
+                    mean(fp_widths(1:2:end))
 
-                        ix_range = [];
-                        y_prof = [];
-                        ix_range = dips(i):dips(i+1);
-                        y_prof = im_profile(ix_range);
-
-                        [pks_peaks(i),p_ix(i)] = max(y_prof);
-
-                        peaks(i) = ix_range(p_ix(i));
-
+                    if p > 0.05
+                        msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
+                        f = msgbox(msg,"Warning","warn");
+                        plot_profiles(app,prof_x,prof_y,im_profile,col)
+                        return;
+                    else
+                        if (fp_widths(1) >= fp_widths(2)) || (fp_peaks(1) > fp_peaks(2))
+                            locs_z_line = all_minima(1:2:end);
+                        else
+                            locs_z_line = all_minima(2:2:end);
+                        end
 
                     end
+
+                    % for i = 1 : numel(all_minima)-1
+                    % 
+                    %     ix_range = [];
+                    %     y_prof = [];
+                    %     ix_range = all_minima(i):all_minima(i+1);
+                    %     y_prof = im_profile(ix_range);
+                    % 
+                    %     [pks_peaks(i),p_ix(i)] = max(y_prof);
+                    % 
+                    %     peaks(i) = ix_range(p_ix(i));
+                    % 
+                    % 
+                    % end
 
                     
                     % [pks_peaks, peaks] = findpeaks(rescale(im_profile), ...
@@ -139,64 +164,111 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                     % plot(peaks,im_profile(peaks),'ro','MarkerSize',10)
                     % plot(dips,im_profile(dips),'ms','MarkerSize',10)
 
-                    for i = 1 : numel(peaks)-1
+                    % for i = 1 : numel(all_minima)
+                    % 
+                    %     x_profile = [];
+                    %     prof = [];
+                    % 
+                    %     if ~any(all_minima(i) > peaks)
+                    %         first_peak_after_minima = find(peaks>all_minima(i),1,'first');
+                    %         x_profile = 1:peaks(first_peak_after_minima);
+                    %     elseif ~any(peaks>all_minima(i))
+                    %         last_peak_before_minima = find(all_minima(i)>peaks,1,'last');
+                    %         x_profile = peaks(last_peak_before_minima) : numel(prof_x);
+                    %     else
+                    %         first_peak_after_minima = find(all_minima(i)<peaks,1,'first');
+                    %         first_peak_before_minima = find(all_minima(i)>peaks,1,'last');
+                    %         x_profile = peaks(first_peak_before_minima):peaks(first_peak_after_minima);
+                    %     end
+                    % 
+                    % 
+                    % 
+                    %     x_coord = prof_x(x_profile);
+                    %     y_coord = prof_y(x_profile);
+                    % 
+                    % 
+                    %     dip_ix = find(all_minima(i) == x_profile);
+                    %     prof = im_profile(x_profile);
+                    %     figure(999)
+                    %     plot(prof)
+                    %     u_width_ix(i,1) = find(prof >= 0.5*(prof(dip_ix) + prof(1)),1,'first');
+                    %     u_width_ix(i,2) = find(prof >= 0.5*(prof(dip_ix) + prof(end)),1,'last');
+                    %     u_width(i) = x_profile(u_width_ix(i,2)) - x_profile(u_width_ix(i,1));
+                    % 
+                    % 
+                    %     width_ix(i,1) = find(prof <= 0.5*(prof(dip_ix) + prof(1)),1,'first');
+                    %     width_ix(i,2) = find(prof <= 0.5*(prof(dip_ix) + prof(end)),1,'last');
+                    %     width(i) = calibration*arclength(x_coord(width_ix(i,1):width_ix(i,2)),y_coord(width_ix(i,1):width_ix(i,2)),'spline');
+                    % 
+                    % 
+                    %     % figure(33)
+                    %     % subplot(3,1,2)
+                    %     % hold on
+                    %     % plot(x_profile,prof)
+                    %     % plot(x_profile(dip_ix),prof(dip_ix),'s')
+                    %     % plot(x_profile(width_ix(i,:)),prof(width_ix(i,:)),'o')
+                    %     % pause(1)
+                    % 
+                    % end
 
-                        x_profile = [];
-                        prof = [];
-
-                        x_profile = peaks(i):peaks(i+1);
-
-                        dip(i) = dips(dips>peaks(i) & dips<peaks(i+1));
-                        dip_ix = find(dip(i) == x_profile);
-                        prof = -im_profile(x_profile) + 1;
-
-                        width_ix(i,1) = find(prof >= 0.5*(prof(dip_ix) + prof(1)),1,'first');
-                        width_ix(i,2) = find(prof >= 0.5*(prof(dip_ix) + prof(end)),1,'last');
-                        width(i) = x_profile(width_ix(i,2)) - x_profile(width_ix(i,1));
-
-                        % subplot(3,1,2)
-                        % hold on
-                        % plot(x_profile,prof)
-                        % plot(x_profile(dip_ix),prof(dip_ix),'s')
-                        % plot(x_profile(width_ix(i,:)),prof(width_ix(i,:)),'o')
-
-                    end
-                    
-                    try
-                    if width(1) >= width(2)
-                        [h,p,ci,stats] = ttest2(width(1:2:end),width(2:2:end))
-                        p;
-                        if p > 0.05
-                            msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
-                            f = msgbox(msg,"Warning","warn");
-                            plot_profiles(app,prof_x,prof_y,im_profile,col)
-                            return;
-                        else
-                            locs_z_line = dip(1:2:end);
-                        end
-
-                    else
-                        [h,p,ci,stats] = ttest2(width(2:2:end),width(1:2:end));
-                        p;
-                        if p > 0.05
-                            msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
-                            f = msgbox(msg,"Warning","warn");
-                            plot_profiles(app,prof_x,prof_y,im_profile,col)
-                            return;
-                        else
-                            locs_z_line = dip(2:2:end);
-                        end
-                    end
-                    catch
-                        msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
-                        f = msgbox(msg,"Warning","warn");
-                        plot_profiles(app,prof_x,prof_y,im_profile,col)
-                    end
+                    % width
+                    % mean(width(2:2:end))
+                    % mean(width(1:2:end))
+                    % d = table();
+                    % 
+                    % for i = 1 : numel(width);
+                    %     d.score(i,1) = width(i);
+                    %     if ~mod(i,2)
+                    %         d.group{i,1} = 'Even';
+                    %     else
+                    %         d.group{i,1} = 'Odd';
+                    %     end
+                    % end
+                    % 
+                    % 
+                    % if channel_no == 1
+                    % figure(222)
+                    % clf
+                    % end
+                    % figure(222)
+                    % sp = subplot(2,1,channel_no)
+                    % fig_jitter(d,"score","group",subplot_handle=sp)
+                    % 
+                    % try
+                    % if width(1) >= width(2)
+                    %     [h,p,ci,stats] = ttest2(width(1:2:end),width(2:2:end));
+                    %     p;
+                    %     if p > 0.05
+                    %         msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
+                    %         f = msgbox(msg,"Warning","warn");
+                    %         plot_profiles(app,prof_x,prof_y,im_profile,col)
+                    %         return;
+                    %     else
+                    %         locs_z_line = all_minima(1:2:end);
+                    %     end
+                    % 
+                    % else
+                    %     [h,p,ci,stats] = ttest2(width(2:2:end),width(1:2:end));
+                    %     p
+                    %     if p > 0.05
+                    %         msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
+                    %         f = msgbox(msg,"Warning","warn");
+                    %         plot_profiles(app,prof_x,prof_y,im_profile,col)
+                    %         return;
+                    %     else
+                    %         locs_z_line = all_minima(2:2:end);
+                    %     end
+                    % end
+                    % catch
+                    %     msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
+                    %     f = msgbox(msg,"Warning","warn");
+                    %     plot_profiles(app,prof_x,prof_y,im_profile,col)
+                    % end
 
                 case 'Across'
                     [pks_z_line, locs_z_line] = findpeaks(rescale(im_profile), ...
                         'MinPeakProminence', prominence * range(rescale(im_profile)), ...
-                        'MinPeakDistance',peak_distance);
+                        'MinPeakDistance',peak_distance,'MinPeakHeight',0.1);
             end
 
             hold(app.ProfileIntensity,'on')
@@ -251,7 +323,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
             if no_of_sarcomeres == 0 && strcmp(labeling,'Across')
                 app.ZLineAnalysisTabGroup.SelectedTab = app.MetricsTab;
-                app.CalculateZLineMetrics(channel_no);
+                app.CalculateZLineMetrics(channel_no,im_profile,locs_z_line,prof_x,prof_y);;
                 app.UpdateSummaryTableZlineMetrics(channel_no);
             end
 
@@ -297,8 +369,6 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                     x_sarc_profile(i,:));
                 y_sarc_profile(i,:) = normalize(y_sarc_profile(i,:),'range');
                 hold(app.Sarcomeres,'on')
-
-
 
                 switch labeling
                     case 'Along'
@@ -403,7 +473,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
                         if i == no_of_sarcomeres
                             app.myofibril_data.profile(channel_no).sarcomere_lengths = sarc_len;
-                            app.CalculateZLineMetrics(channel_no,im_profile,locs_z_line);
+                            app.CalculateZLineMetrics(channel_no,im_profile,locs_z_line,prof_x,prof_y);
                             app.UpdateSummaryTableZlineMetrics(channel_no);
                             app.UpdateSummaryTableZlineSL(channel_no,no_of_sarcomeres);
                             mean_sarc_profile = mean(y_sarc_profile,1);
@@ -550,7 +620,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
         end
 
-        function CalculateZLineMetrics(app,channel_no,im_profile,locs_z_line)
+        function CalculateZLineMetrics(app,channel_no,im_profile,locs_z_line,prof_x,prof_y)
 
                 peak_distance = app.PeakDistancepxEditField.Value;
                 calibration = app.CalibrationumpxEditField.Value;
@@ -559,6 +629,9 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 binary_image = app.myofibril_data.binary_image{channel_no,1};
                 x = app.myofibril_data.profile(1).xs;
                 y = app.myofibril_data.profile(1).ys;
+                app.myofibril_data.profile(channel_no).fwhm = [];
+                app.myofibril_data.profile(channel_no).tortuosity = [];
+                app.myofibril_data.profile(channel_no).structural_splines = [];
 
 
                 [lab_im,total_number_of_blobs] = bwlabel(binary_image);
@@ -705,8 +778,12 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
                 [~,locs_z_line_base] = findpeaks(rescale(-im_profile), ...
                     "MinPeakDistance",peak_distance, ...
-                    "MinPeakProminence",0.5);
-               
+                    "MinPeakHeight",0.8);
+
+                figure(22)
+                findpeaks(rescale(-im_profile), ...
+                    "MinPeakDistance",peak_distance, ...
+                    "MinPeakHeight",0.8)
 
                 for i = 1 : numel(locs_z_line)
                     
@@ -725,16 +802,59 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                         adj_base_lines(2) = locs_z_line_base(find(locs_z_line_base >= locs_z_line(i), 1, 'first'));
                     end
 
-                    x_profile(i,:) = linspace(adj_base_lines(1),adj_base_lines(2),1000);
-                    x_temp = adj_base_lines(1):adj_base_lines(2);
+
+
                     
-                    z_profile(i,:) = interp1(x_temp, ...
+                    x_temp = adj_base_lines(1):adj_base_lines(2);
+                    x_coord = prof_x(x_temp);
+                    y_coord = prof_y(x_temp);
+                    x_profile(i,:) = linspace(x_coord(1),x_coord(end),1000);
+                    yy_profile(i,:) = linspace(y_coord(1),y_coord(end),1000);
+
+
+                    z_profile = []
+                    z_profile = im_profile(adj_base_lines(1):adj_base_lines(2))
+                    utku_profile = interp1(x_coord, ...
                         im_profile(adj_base_lines(1):adj_base_lines(2)), ...
                         x_profile(i,:));
+                    utku_profile_2 = interp1(y_coord, ...
+                        im_profile(adj_base_lines(1):adj_base_lines(2)), ...
+                        yy_profile(i,:));
 
-                    fwhm_ix(i,1) = find(z_profile(i,:) >= 0.5*(max(z_profile(i,:)) + z_profile(i,1)),1,'first');
-                    fwhm_ix(i,2) = find(z_profile(i,:) >= 0.5*(max(z_profile(i,:)) + z_profile(i,end)),1,'last');
-                    fwhm(i) = calibration*(x_profile(i,fwhm_ix(i,2)) - x_profile(i,fwhm_ix(i,1)));
+                    fwhm_ix(i,1) = find(z_profile >= 0.5*(max(z_profile) + z_profile(1)),1,'first')
+                    fwhm_ix(i,2) = find(z_profile >= 0.5*(max(z_profile) + z_profile(end)),1,'last')
+                    fwhm(i) = calibration*arclength(x_coord(fwhm_ix(i,1):fwhm_ix(i,2)),y_coord(fwhm_ix(i,1):fwhm_ix(i,2)),'spline')
+
+
+
+
+                    % for i = 1 : no_of_sarcomeres
+                    %     profile_indices = locs_z_line(i) : locs_z_line(i+1);
+                    %     x_coord = prof_x(profile_indices);
+                    %     y_coord = prof_y(profile_indices);
+                    %     sarc_profile = im_profile(profile_indices);
+                    %     sarc_profile = rescale(sarc_profile)
+                    %     locs_all = [];
+                    %     locs_m_line = [];
+                    %
+                    %     % u_fwhm = [];
+                    %     try
+                    %         [~, locs_all] = findpeaks((sarc_profile), ...
+                    %             'MinPeakDistance',peak_distance, ...
+                    %             'MinPeakProminence',prominence);
+                    %         [~,locs_m_line] = max(-sarc_profile(locs_all(1):locs_all(2)));
+                    %         locs_m_line = locs_m_line + locs_all(1) - 1;
+                    %     catch
+                    %         sarcs_to_remove = [sarcs_to_remove;i];
+                    %         u_fwhm(i) = NaN;
+                    %         continue
+                    %     end
+                    %
+                    %     u_fwhm_ix(i,1) = find(sarc_profile >= 0.5*sarc_profile(locs_all(1)),1,'first');
+                    %     u_fwhm_ix(i,2) = find(sarc_profile >= 0.5*sarc_profile(locs_all(2)),1,'last');
+                    %     u_fwhm(i) = calibration*arclength(x_coord(u_fwhm_ix(i,1):u_fwhm_ix(i,2)),y_coord(u_fwhm_ix(i,1):u_fwhm_ix(i,2)),'spline')
+                    %
+                    % end
 
                     % figure(111)
                     % clf
@@ -854,8 +974,8 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 st.channel(i,:) = channel_no;
                 st.line_no(i,:) = i;
             end
-            st.tortuosity = app.myofibril_data.profile(channel_no).tortuosity;
-            st.fwhm = app.myofibril_data.profile(channel_no).fwhm';
+            st.tortuosity = app.myofibril_data.profile(channel_no).tortuosity
+            st.fwhm = app.myofibril_data.profile(channel_no).fwhm'
             app.SummaryTableZLineMetrics.Data = [app.SummaryTableZLineMetrics.Data; struct2table(st)];
         end
 
@@ -910,6 +1030,96 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
             end
         end
         
+        
+        function LoadMicroscopeFormats(app,scope,scope_ext)
+            f = figure('Renderer', 'painters', 'Position', [-100 -100 0 0]);
+
+            [file_string,path_string]=uigetfile2( ...
+                {scope_ext,scope}, ...
+                'Select Image File');
+            delete(f)
+
+            if (path_string~=0)
+                app.myofibril_data = [];
+                app.myofibril_data.image_file_string = fullfile(path_string,file_string);
+                im_ax = app.ImageAxes;
+                app.Tabs = [];
+                app.ChannelAxes = [];
+                labeling = app.LabelingDropDown.Value;
+                app.myofibril_data.image_file = bfopen(app.myofibril_data.image_file_string);
+                app.myofibril_data.meta_file = app.myofibril_data.image_file{1,2};
+                h = app.myofibril_data.meta_file;
+                im = app.myofibril_data.image_file;
+                im = im{1,1}
+                im(:,2) = [];
+                app.myofibril_data.image = im;
+                sz = size(im);
+                delete(app.ImageTabGroup.Children)
+                tab_no = 1;
+                brightfield_im = 0;
+
+
+                switch scope
+
+                    case 'ND2'
+                        app.CalibrationumpxEditField.Value = h.get('Global dCalibration');
+                        for i = 1:sz(1)
+                                w_text = sprintf('Global CSU-W1, FilterChanger(EM) #%i',i);
+                                w_text = h.get(w_text);
+                                if contains(w_text,'(Empty)')
+                                    brightfield_im = i;
+                                else
+                                em_wavelength = str2double(extractBetween(w_text,"(","/"));
+                                app.myofibril_data.em_wavelengths(tab_no) = em_wavelength;
+                                app.Tabs{tab_no} = uitab(app.ImageTabGroup,'Title',['Channel ' num2str(tab_no)]);
+                                app.ChannelAxes{tab_no} = copyobj(im_ax,app.Tabs{tab_no});
+                                app.ChannelAxes{tab_no}.Visible = 'on';
+                                center_image_with_preserved_aspect_ratio(app.myofibril_data.image{i,1},app.ChannelAxes{tab_no})
+                                % app.myofibril_data.pseudo_color_images{tab_no,1} = app.myofibril_data.image{i,1};
+                                tab_no = tab_no + 1;
+                                end
+                        end
+                    case 'CZI'
+                        app.CalibrationumpxEditField.Value = str2double(h.get('Global Scaling|Distance|Value #1'))*1e6;
+                        for i = 1:sz(1)
+                                if sz(1) > 1
+                                    w_text = sprintf('Global DisplaySetting|Channel|DyeMaxEmission #%i',i);
+                                    fluor_check_text = sprintf('Global Information|Image|Channel|IlluminationType #%i',i);
+                                else
+                                    w_text = sprintf('Global DisplaySetting|Channel|DyeMaxEmission');
+                                    fluor_check_text = sprintf('Global Information|Image|Channel|IlluminationType');
+                                end
+                                w_text = h.get(w_text);
+                                fluor_check_text = h.get(fluor_check_text);
+                                
+                                if contains(fluor_check_text,'Transmitted') || contains(fluor_check_text,'Brightfield')
+                                    brightfield_im = i;
+                                else
+                                em_wavelength = str2double(w_text);
+                                app.myofibril_data.em_wavelengths(tab_no) = em_wavelength;
+                                app.Tabs{tab_no} = uitab(app.ImageTabGroup,'Title',['Channel ' num2str(tab_no)]);
+                                app.ChannelAxes{tab_no} = copyobj(im_ax,app.Tabs{tab_no});
+                                app.ChannelAxes{tab_no}.Visible = 'on';
+                                center_image_with_preserved_aspect_ratio(app.myofibril_data.image{i,1},app.ChannelAxes{tab_no})
+                                tab_no = tab_no + 1;
+                                end
+                        end
+                end
+                if brightfield_im
+                    app.myofibril_data.image(brightfield_im) = [];
+                end
+                app.Tabs{end+1} = uitab(app.ImageTabGroup,'Title','Merged ');
+                app.ChannelAxes{end+1} = copyobj(im_ax,app.Tabs{end});
+                app.ChannelAxes{end}.Visible = 'on';
+                app.ColorScheme;
+                app.PseudoColoring
+                app.RefreshDisplay
+                switch labeling
+                    case 'Across'
+                        app.BinarizeImages;
+                end
+            end
+        end
     end
 
 
@@ -925,78 +1135,16 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
         % Menu selected function: NikonMenu
         function NikonImageSelected(app, event)
-            f = figure('Renderer', 'painters', 'Position', [-100 -100 0 0]);
+            scope = 'ND2';
+            scope_ext= '*.nd2';
+            LoadMicroscopeFormats(app,scope,scope_ext);         
+        end
 
-            [file_string,path_string]=uigetfile2( ...
-                {'*.nd2','ND2'}, ...
-                'Select Image File');
-            delete(f)
-
-            if (path_string~=0)
-                app.myofibril_data = [];
-                app.myofibril_data.image_file_string = fullfile(path_string,file_string);
-                im_ax = app.ImageAxes;
-                app.Tabs = [];
-                app.ChannelAxes = [];
-                labeling = app.LabelingDropDown.Value;
-
-                if contains(file_string,'.nd2')
-                    app.myofibril_data.image_file = bfopen(app.myofibril_data.image_file_string);
-                    app.myofibril_data.meta_file = app.myofibril_data.image_file{1,2};
-                    h = app.myofibril_data.meta_file;
-                    app.CalibrationumpxEditField.Value = h.get('Global dCalibration')
-                    im = app.myofibril_data.image_file;
-                    im = im{1,1}
-                    im(:,2) = [];
-                    app.myofibril_data.image = im;
-                    sz = size(im);
-                    delete(app.ImageTabGroup.Children)
-                    tab_no = 1;
-                    brightfield_im = 0;
-                    for i = 1:sz(1)
-                        try
-                            w_text = sprintf('Global CSU-W1, FilterChanger(EM) #%i',i);
-                            w_text = h.get(w_text);
-                            em_wavelength = str2double(extractBetween(w_text,"(","/"));
-                            app.myofibril_data.em_wavelengths(tab_no) = em_wavelength;
-                            app.Tabs{tab_no} = uitab(app.ImageTabGroup,'Title',['Channel ' num2str(tab_no)]);
-                            app.ChannelAxes{tab_no} = copyobj(im_ax,app.Tabs{tab_no});
-                            app.ChannelAxes{tab_no}.Visible = 'on';
-                            center_image_with_preserved_aspect_ratio(app.myofibril_data.image{i,1},app.ChannelAxes{tab_no})
-                            % app.myofibril_data.pseudo_color_images{tab_no,1} = app.myofibril_data.image{i,1};
-                            tab_no = tab_no + 1;
-                        catch
-                            brightfield_im = i;
-                            continue
-                        end
-
-                    end
-                    if brightfield_im
-                        app.myofibril_data.image(i) = [];
-                    end
-                    app.Tabs{end+1} = uitab(app.ImageTabGroup,'Title','Merged ');
-                    app.ChannelAxes{end+1} = copyobj(im_ax,app.Tabs{end});
-                    app.ChannelAxes{end}.Visible = 'on';
-                    app.ColorScheme;
-                    app.PseudoColoring
-                    app.RefreshDisplay
-                    switch labeling
-                        case 'Across'
-                            app.BinarizeImages;
-                    end
-                else
-                    im = imread(app.myofibril_data.image_file_string);
-                    if (ndims(im)==3)
-                        im = rgb2gray(im);
-                    end
-                    app.myofibril_data.image = im;
-                    app.ChannelAxes{1} = copyobj(im_ax,app.ImageTab);
-                    app.ChannelAxes{1}.Visible = 'on';
-                end
-
-                % center_image_with_preserved_aspect_ratio(app.myofibril_data.image,app.ImageAxes)
-
-            end
+        % Menu selected function: ZeissMenu
+        function ZeissMenuSelected(app, event)
+            scope = 'CZI';
+            scope_ext= '*.czi';
+            LoadMicroscopeFormats(app,scope,scope_ext);    
         end
 
         % Menu selected function: StandardFormatsMenu
@@ -1060,49 +1208,6 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                             app.BinarizeImages;
                     end
                 end
-
-
-                % if (path_string~=0)
-                %     app.myofibril_data = [];
-                %     app.myofibril_data.image_file_string{i} = fullfile(path_string,file_string);
-                %     if contains(file_string,'.nd2')
-                %         app.myofibril_data.image_file = bfopen(app.myofibril_data.image_file_string);
-                %         app.myofibril_data.meta_file = app.myofibril_data.image_file{1,2};
-                %         h = app.myofibril_data.meta_file;
-                %         app.CalibrationumpxEditField.Value = h.get('Global dCalibration');
-                %         im = app.myofibril_data.image_file;
-                %         im = im{1,1};
-                %         im(:,2) = [];
-                %         app.myofibril_data.image = im;
-                %         sz = size(im);
-                %         delete(app.ImageTabGroup.Children)
-                %         for i = 1:sz(1)
-                %             app.Tabs{i} = uitab(app.ImageTabGroup,'Title',['Channel ' num2str(i)]);
-                %             app.ChannelAxes{i} = copyobj(im_ax,app.Tabs{i});
-                %             app.ChannelAxes{i}.Visible = 'on';
-                %             center_image_with_preserved_aspect_ratio(app.myofibril_data.image{i,1},app.ChannelAxes{i})
-                %             app.myofibril_data.pseudo_color_images{i,1} = app.myofibril_data.image{i,1};
-                %             w_text = sprintf('Global CSU-W1, FilterChanger(EM) #%i',i);
-                %             w_text = h.get(w_text);
-                %             em_wavelength = str2double(extractBetween(w_text,"(","/"));
-                %             app.myofibril_data.em_wavelengths(i) = em_wavelength;
-                %         end
-                %         app.Tabs{end+1} = uitab(app.ImageTabGroup,'Title','Merged ');
-                %         app.ChannelAxes{end+1} = copyobj(im_ax,app.Tabs{end});
-                %         app.ChannelAxes{end}.Visible = 'on';
-                %         app.ColorScheme;
-                %         app.PseudoColoring
-                %         app.RefreshDisplay
-                %     else
-                %         im = imread(app.myofibril_data.image_file_string);
-                %         app.myofibril_data.image = im;
-                %         app.ChannelAxes{1} = copyobj(im_ax,app.ImageTab);
-                %         app.ChannelAxes{1}.Visible = 'on';
-                %     end
-                %
-                %     % center_image_with_preserved_aspect_ratio(app.myofibril_data.image,app.ImageAxes)
-                %
-                % end
             end
         end
 
@@ -1287,6 +1392,19 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                         for i = 1 : numel(metrics_summary_fields)
                             metrics_out.(metrics_summary_fields{i}) = [];
                         end
+
+                        for i = 1 : no_of_channels
+                            figure_name = erase(output_file_string,'.xlsx');
+                            figure_name = sprintf('%s_analyzed_image_channel_%i.png',figure_name,i);
+                            exportgraphics(app.ChannelAxes{i},figure_name, ...
+                                Resolution = 700, ...
+                                ContentType = "vector")
+                            figure_name = erase(output_file_string,'.xlsx');
+                            figure_name = sprintf('%s_analyzed_binary_image_channel_%i.png',figure_name,i);
+                            exportgraphics(app.BinaryChannelAxes{i},figure_name, ...
+                                Resolution = 700, ...
+                                ContentType = "vector")
+                        end
                 end
 
                 for i = 1 : numel(summary_fields)
@@ -1325,9 +1443,6 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                             sum_out.sem_tortuosity(i,1) = std(app.myofibril_data.profile(i).tortuosity)/sqrt(numel(app.myofibril_data.profile(i).tortuosity));
                     end
                 end
-
-
-
 
                 for i = 1 : no_of_channels
                     sarcomere_out.channel_no = [sarcomere_out.channel_no;...
@@ -1585,6 +1700,11 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
             app.NikonMenu = uimenu(app.LoadImageMenu);
             app.NikonMenu.MenuSelectedFcn = createCallbackFcn(app, @NikonImageSelected, true);
             app.NikonMenu.Text = 'Nikon';
+
+            % Create ZeissMenu
+            app.ZeissMenu = uimenu(app.LoadImageMenu);
+            app.ZeissMenu.MenuSelectedFcn = createCallbackFcn(app, @ZeissMenuSelected, true);
+            app.ZeissMenu.Text = 'Zeiss';
 
             % Create StandardFormatsMenu
             app.StandardFormatsMenu = uimenu(app.LoadImageMenu);
