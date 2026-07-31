@@ -113,12 +113,16 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                         'MinPeakProminence', prominence * range(flipped_profile), ...
                         'MinPeakDistance',peak_distance);
                     % figure(2)
+                    % findpeaks(flipped_profile, ...
+                    %     'MinPeakProminence', prominence * range(flipped_profile), ...
+                    %     'MinPeakDistance',peak_distance)
+                    % figure(2)
                     % findpeaks(-rescale(im_profile), ...
                     %     'MinPeakDistance',peak_distance)
-                    figure(23)
-                    findpeaks(flipped_profile, ...
-                        'MinPeakProminence', prominence * range(flipped_profile), ...
-                        'MinPeakDistance',peak_distance,'Annotate','extents')
+                    % figure(23)
+                    % findpeaks(flipped_profile, ...
+                    %     'MinPeakProminence', prominence * range(flipped_profile), ...
+                    %     'MinPeakDistance',peak_distance,'Annotate','extents')
                     [~,p,~,~] = ttest2(fp_widths(2:2:end),fp_widths(1:2:end))
                     mean(fp_widths(2:2:end))
                     mean(fp_widths(1:2:end))
@@ -137,140 +141,13 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
 
                     end
 
-                    % for i = 1 : numel(all_minima)-1
-                    % 
-                    %     ix_range = [];
-                    %     y_prof = [];
-                    %     ix_range = all_minima(i):all_minima(i+1);
-                    %     y_prof = im_profile(ix_range);
-                    % 
-                    %     [pks_peaks(i),p_ix(i)] = max(y_prof);
-                    % 
-                    %     peaks(i) = ix_range(p_ix(i));
-                    % 
-                    % 
-                    % end
-
-                    
-                    % [pks_peaks, peaks] = findpeaks(rescale(im_profile), ...
-                    %     'MinPeakProminence', prominence * range(rescale(im_profile)), ...
-                    %     'MinPeakDistance',peak_distance);
-
-                    % figure(1)
-                    % clf
-                    % subplot(3,1,1)
-                    % hold on
-                    % plot(im_profile,'k')
-                    % plot(peaks,im_profile(peaks),'ro','MarkerSize',10)
-                    % plot(dips,im_profile(dips),'ms','MarkerSize',10)
-
-                    % for i = 1 : numel(all_minima)
-                    % 
-                    %     x_profile = [];
-                    %     prof = [];
-                    % 
-                    %     if ~any(all_minima(i) > peaks)
-                    %         first_peak_after_minima = find(peaks>all_minima(i),1,'first');
-                    %         x_profile = 1:peaks(first_peak_after_minima);
-                    %     elseif ~any(peaks>all_minima(i))
-                    %         last_peak_before_minima = find(all_minima(i)>peaks,1,'last');
-                    %         x_profile = peaks(last_peak_before_minima) : numel(prof_x);
-                    %     else
-                    %         first_peak_after_minima = find(all_minima(i)<peaks,1,'first');
-                    %         first_peak_before_minima = find(all_minima(i)>peaks,1,'last');
-                    %         x_profile = peaks(first_peak_before_minima):peaks(first_peak_after_minima);
-                    %     end
-                    % 
-                    % 
-                    % 
-                    %     x_coord = prof_x(x_profile);
-                    %     y_coord = prof_y(x_profile);
-                    % 
-                    % 
-                    %     dip_ix = find(all_minima(i) == x_profile);
-                    %     prof = im_profile(x_profile);
-                    %     figure(999)
-                    %     plot(prof)
-                    %     u_width_ix(i,1) = find(prof >= 0.5*(prof(dip_ix) + prof(1)),1,'first');
-                    %     u_width_ix(i,2) = find(prof >= 0.5*(prof(dip_ix) + prof(end)),1,'last');
-                    %     u_width(i) = x_profile(u_width_ix(i,2)) - x_profile(u_width_ix(i,1));
-                    % 
-                    % 
-                    %     width_ix(i,1) = find(prof <= 0.5*(prof(dip_ix) + prof(1)),1,'first');
-                    %     width_ix(i,2) = find(prof <= 0.5*(prof(dip_ix) + prof(end)),1,'last');
-                    %     width(i) = calibration*arclength(x_coord(width_ix(i,1):width_ix(i,2)),y_coord(width_ix(i,1):width_ix(i,2)),'spline');
-                    % 
-                    % 
-                    %     % figure(33)
-                    %     % subplot(3,1,2)
-                    %     % hold on
-                    %     % plot(x_profile,prof)
-                    %     % plot(x_profile(dip_ix),prof(dip_ix),'s')
-                    %     % plot(x_profile(width_ix(i,:)),prof(width_ix(i,:)),'o')
-                    %     % pause(1)
-                    % 
-                    % end
-
-                    % width
-                    % mean(width(2:2:end))
-                    % mean(width(1:2:end))
-                    % d = table();
-                    % 
-                    % for i = 1 : numel(width);
-                    %     d.score(i,1) = width(i);
-                    %     if ~mod(i,2)
-                    %         d.group{i,1} = 'Even';
-                    %     else
-                    %         d.group{i,1} = 'Odd';
-                    %     end
-                    % end
-                    % 
-                    % 
-                    % if channel_no == 1
-                    % figure(222)
-                    % clf
-                    % end
-                    % figure(222)
-                    % sp = subplot(2,1,channel_no)
-                    % fig_jitter(d,"score","group",subplot_handle=sp)
-                    % 
-                    % try
-                    % if width(1) >= width(2)
-                    %     [h,p,ci,stats] = ttest2(width(1:2:end),width(2:2:end));
-                    %     p;
-                    %     if p > 0.05
-                    %         msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
-                    %         f = msgbox(msg,"Warning","warn");
-                    %         plot_profiles(app,prof_x,prof_y,im_profile,col)
-                    %         return;
-                    %     else
-                    %         locs_z_line = all_minima(1:2:end);
-                    %     end
-                    % 
-                    % else
-                    %     [h,p,ci,stats] = ttest2(width(2:2:end),width(1:2:end));
-                    %     p
-                    %     if p > 0.05
-                    %         msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
-                    %         f = msgbox(msg,"Warning","warn");
-                    %         plot_profiles(app,prof_x,prof_y,im_profile,col)
-                    %         return;
-                    %     else
-                    %         locs_z_line = all_minima(2:2:end);
-                    %     end
-                    % end
-                    % catch
-                    %     msg = sprintf('Channel %i profile does not have a distinguishable pattern.',channel_no);
-                    %     f = msgbox(msg,"Warning","warn");
-                    %     plot_profiles(app,prof_x,prof_y,im_profile,col)
-                    % end
-
                 case 'Across'
                     [pks_z_line, locs_z_line] = findpeaks(rescale(im_profile), ...
                         'MinPeakProminence', prominence * range(rescale(im_profile)), ...
                         'MinPeakDistance',peak_distance,'MinPeakHeight',0.1);
+                    
             end
-
+            app.myofibril_data.profile(channel_no).locz_z_line = locs_z_line;
             hold(app.ProfileIntensity,'on')
             hold(app.ProfileIntensityXCoord,'on')
             hold(app.ProfileIntensityYCoord,'on')
@@ -564,10 +441,10 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 st.color{i,:} = '';
             end
             st.sarcomere_lengths = app.myofibril_data.profile(channel_no).sarcomere_lengths';
-            st.fwhm = app.myofibril_data.profile(channel_no).fwhm';
+            st.fwhm_um = app.myofibril_data.profile(channel_no).fwhm';
 
-            if numel(st.sarcomere_lengths) ~= numel(st.fwhm)
-                st.fwhm(end+1:numel(st.sarcomere_lengths),1) = NaN;
+            if numel(st.sarcomere_lengths) ~= numel(st.fwhm_um)
+                st.fwhm_um(end+1:numel(st.sarcomere_lengths),1) = NaN;
             end
 
 
@@ -780,10 +657,10 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                     "MinPeakDistance",peak_distance, ...
                     "MinPeakHeight",0.8);
 
-                figure(22)
-                findpeaks(rescale(-im_profile), ...
-                    "MinPeakDistance",peak_distance, ...
-                    "MinPeakHeight",0.8)
+                % figure(22)
+                % findpeaks(rescale(-im_profile), ...
+                %     "MinPeakDistance",peak_distance, ...
+                %     "MinPeakHeight",0.8)
 
                 for i = 1 : numel(locs_z_line)
                     
@@ -975,7 +852,11 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 st.line_no(i,:) = i;
             end
             st.tortuosity = app.myofibril_data.profile(channel_no).tortuosity
-            st.fwhm = app.myofibril_data.profile(channel_no).fwhm'
+            st.fwhm_um = app.myofibril_data.profile(channel_no).fwhm'
+            
+            if numel(st.fwhm_um) ~= numel(st.tortuosity)
+                st.fwhm_um(end+1) = NaN
+            end
             app.SummaryTableZLineMetrics.Data = [app.SummaryTableZLineMetrics.Data; struct2table(st)];
         end
 
@@ -984,7 +865,7 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 st.channel(i,:) = channel_no;
                 st.profile_no(i,:) = i;
             end
-            st.sl = app.myofibril_data.profile(channel_no).sarcomere_lengths';
+            st.sarcomere_length_um = app.myofibril_data.profile(channel_no).sarcomere_lengths';
 
             app.SummaryTableZLineSL.Data = [app.SummaryTableZLineSL.Data; struct2table(st)];
 
@@ -1382,23 +1263,31 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 sarcomere_summary_fields = {'channel_no','sarcomere_index',...
                     'sarcomere_length_um'};
 
+                for i = 1 : no_of_channels
+                    figure_name = erase(output_file_string,'.xlsx');
+                    figure_name = sprintf('%s_analyzed_image_channel_%i.png',figure_name,i);
+                    exportgraphics(app.ChannelAxes{i},figure_name, ...
+                        Resolution = 700, ...
+                        ContentType = "vector")
+                end
+
+                 figure_name = sprintf('%s_analyzed_image_merged.png',figure_name);
+                 exportgraphics(app.ChannelAxes{end},figure_name, ...
+                     Resolution = 700, ...
+                     ContentType = "vector")
+
                 switch labeling
                     case 'Along'
                         summary_fields = [summary_fields {'mean_fwhm_um','std_fwhm_um','sem_fwhm_um'}];
                         sarcomere_summary_fields = [sarcomere_summary_fields {'fwhm_um'}];
                     case 'Across'
-                        summary_fields = [summary_fields {'mean_tortuosity','std_tortuosity','sem_tortuosity'}];
-                        metrics_summary_fields = {'channel_no','line_index','tortuosity'};
+                        summary_fields = [summary_fields {'mean_tortuosity','std_tortuosity','sem_tortuosity','mean_fwhm_um','std_fwhm_um','sem_fwhm_um'}];
+                        metrics_summary_fields = {'channel_no','line_index','tortuosity','fwhm_um'};
                         for i = 1 : numel(metrics_summary_fields)
                             metrics_out.(metrics_summary_fields{i}) = [];
                         end
 
                         for i = 1 : no_of_channels
-                            figure_name = erase(output_file_string,'.xlsx');
-                            figure_name = sprintf('%s_analyzed_image_channel_%i.png',figure_name,i);
-                            exportgraphics(app.ChannelAxes{i},figure_name, ...
-                                Resolution = 700, ...
-                                ContentType = "vector")
                             figure_name = erase(output_file_string,'.xlsx');
                             figure_name = sprintf('%s_analyzed_binary_image_channel_%i.png',figure_name,i);
                             exportgraphics(app.BinaryChannelAxes{i},figure_name, ...
@@ -1441,31 +1330,20 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                             sum_out.mean_tortuosity(i,1) = mean(app.myofibril_data.profile(i).tortuosity);
                             sum_out.std_tortuosity(i,1) = std(app.myofibril_data.profile(i).tortuosity);
                             sum_out.sem_tortuosity(i,1) = std(app.myofibril_data.profile(i).tortuosity)/sqrt(numel(app.myofibril_data.profile(i).tortuosity));
+                            sum_out.mean_fwhm_um(i,1) = mean(app.myofibril_data.profile(i).fwhm);
+                            sum_out.std_fwhm_um(i,1) = std(app.myofibril_data.profile(i).fwhm);
+                            sum_out.sem_fwhm_um(i,1) = std(app.myofibril_data.profile(i).fwhm)/sqrt(numel(app.myofibril_data.profile(i).fwhm));
                     end
                 end
 
-                for i = 1 : no_of_channels
-                    sarcomere_out.channel_no = [sarcomere_out.channel_no;...
-                        i*ones(numel(app.myofibril_data.profile(i).sarcomere_lengths),1)];
-                    sarcomere_out.sarcomere_index = [sarcomere_out.sarcomere_index;...
-                        (1:numel(app.myofibril_data.profile(i).sarcomere_lengths))'];
-                    sarcomere_out.sarcomere_length_um = [sarcomere_out.sarcomere_length_um;...
-                        (app.myofibril_data.profile(i).sarcomere_lengths)'];
-
-                    switch labeling
-                        case 'Along'
-                            sarcomere_out.fwhm_um = [sarcomere_out.fwhm_um;...
-                                (app.myofibril_data.profile(i).fwhm)'];
-                        case 'Across'
-                            metrics_out.channel_no = [metrics_out.channel_no;...
-                                i*ones(numel(app.myofibril_data.profile(i).tortuosity),1)];
-                            metrics_out.line_index = [metrics_out.line_index;...
-                                (1:numel(app.myofibril_data.profile(i).tortuosity))'];
-                            metrics_out.tortuosity = [metrics_out.tortuosity;...
-                                (app.myofibril_data.profile(i).tortuosity)];
-                    end
-
+                switch labeling
+                    case 'Along'
+                        sarcomere_out = app.SummaryTableABand.Data;
+                    case 'Across'
+                        sarcomere_out = app.SummaryTableZLineSL.Data;
+                        metrics_out = app.SummaryTableZLineMetrics.Data;
                 end
+
 
                 if numel(app.myofibril_data.image_file_string) > 1 && ~ischar(dat_type)
                     for i = 2 : no_of_channels
@@ -1478,9 +1356,9 @@ classdef MyoProfiler_exported < matlab.apps.AppBase
                 end
                 sum_out.px_to_um_calibration(2:no_of_channels,1) = sum_out.px_to_um_calibration(1);
                 writetable(struct2table(sum_out),output_file_string,'Sheet','Analysis Summary')
-                writetable(struct2table(sarcomere_out),output_file_string,'Sheet','Sarcomere Summary')
+                writetable(sarcomere_out,output_file_string,'Sheet','Sarcomere Summary')
                 if strcmp(labeling,'Across')
-                    writetable(struct2table(metrics_out),output_file_string,'Sheet','Metrics Summary')
+                    writetable(metrics_out,output_file_string,'Sheet','Metrics Summary')
                 end
 
 
